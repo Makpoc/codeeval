@@ -1,0 +1,42 @@
+#!/usr/bin/env python2.7
+# encoding=utf-8
+
+import sys
+
+def load_file(f):
+    return open(f, 'r')
+
+def int_to_bin(i):
+    if i == 0:
+        return '0'
+
+    s = ''
+    while i:
+        if i & 1 == 1:
+            s = '1' + s
+        else:
+            s = '0' + s
+        i >>= 1
+
+    return s
+
+
+def main(argv):
+    f = load_file(argv[0])
+
+    for row in f:
+        # print '------------'
+        row = row.strip('\n')
+        row = [int(i) for i in row.split(',')]
+        # print 'Working on row %s' % row
+        binary_repr = int_to_bin(row[0])
+        binary_repr2 = '{0:b}'.format(row[0])
+        # print 'Binary representation: %s'% binary_repr
+        # print 'Will look for positions %s and %s' %(row[1], row[2])
+        print str(binary_repr[row[1]-1] == binary_repr[row[2]-1]).lower() + '->' +  str(binary_repr2[row[1]-1] == binary_repr2[row[2]-1]).lower()
+
+
+    f.close()
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))

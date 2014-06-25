@@ -1,0 +1,67 @@
+#!/usr/bin/env python2.7
+# encoding=utf-8
+
+import sys
+
+def load_file(f):
+    return open(f, 'r')
+
+def close_file(f):
+    f.close()
+
+def detect_cicle(entries):
+    hare = 0
+    tortoise = 0
+
+    while True:
+        hare += 2
+        tortoise += 1
+
+        if hare >= len(entries):
+            hare = len(entries) - 1
+
+
+        if entries[hare] == entries[tortoise]:
+            # inside loop. TODO - handle
+            print 'Inside loop at position %s/%s. Values: %s/%s' % (tortoise, hare, entries[hare], entries[tortoise])
+            # go back to the first equality location
+            while entries[hare] == entries[tortoise]:
+                if tortoise == 0:
+                    # starting from the beginning
+                    break
+                hare -= 1
+                tortoise -= 1
+                print 'Moving back to position %s/%s. Values: %s/%s' % ( hare, tortoise, entries[hare], entries[tortoise])
+            else:
+                # if the values are different - return to the next item, where the loop begins
+                print "Found the start at position %s. Value: %s" % (tortoise, entries[tortoise])
+                tortoise += 1
+
+            # we are at the start of the loop
+            loop = []
+            c = entries[tortoise]
+            while c not in loop:
+                loop.append(c)
+                tortoise += 1
+                if tortoise >= len(entries):
+                    break
+                c = entries[tortoise]
+                print "Adding %s" % c
+
+            return " ".join(loop).strip()
+
+
+def main(argv):
+    print argv
+    f = load_file(argv[0])
+
+    for row in f:
+        row = row.strip('\n')
+        print 'Working on: ' + row
+        print detect_cicle(row.split(" "))
+
+    close_file(f)
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))

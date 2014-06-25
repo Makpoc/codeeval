@@ -1,0 +1,36 @@
+#!/usr/bin/env python2.7
+# encoding=utf-8
+
+import sys
+
+def load_file(f):
+    return open(f, 'r')
+
+def is_repeated(c, str):
+    first_index = str.find(c)
+    # print 'first_index of %s is %d' % (c, first_index)
+    return c in str[first_index+1:]
+    
+
+def main(argv):
+    f = load_file(argv[0])
+
+    for row in f:
+        row = row.strip('\n')
+        repeated_chars = []
+        # print 'Working on row %s' % row
+        for c in row:
+            if c in repeated_chars:
+                # print '%s already in repeated_chars' % c
+                continue
+            elif is_repeated(c, row):
+                # print '%s added to repeated chars' % c
+                repeated_chars.append(c)
+            else:
+                print c
+                break
+
+    f.close()
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))

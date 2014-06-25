@@ -1,0 +1,109 @@
+#!/usr/bin/env python2.7
+# encoding=utf-8
+
+import sys
+
+
+class Node(object):
+    """ Node within a binary search tree """
+
+    def __init__(self, data):
+        self.l_child = None
+        self.r_child = None
+        self.data = data
+
+
+class Tree(object):
+    """ Binary search tree """
+
+    def __init__(self, root):
+        self.root = root
+
+    def insert(self, data, parent=None):
+        if not parent:
+            parent = self.root
+
+        if data < parent.data:
+            if not parent.l_child:
+                parent.l_child = Node(data)
+            else:
+                self.insert(data, parent.l_child)
+        else:
+            if not parent.r_child:
+                parent.r_child = Node(data)
+            else:
+                self.insert(data, parent.r_child)
+
+    def find(self, data, root=None):
+        if not root:
+            root = self.root
+
+        if data == root.data:
+            return root 
+
+        if data < root.data:
+            if root.l_child:
+                return self.find(data, root.l_child)
+
+        if data > root.data:
+            if root.r_child:
+                return self.find(data, root.r_child)
+
+        return None
+
+    def trace(self, data, root=None):
+        if not root:
+            root = self.root
+
+        if data < root.data:
+            if root.l_child:
+                return "%s %s" % ( self.trace(data, root.l_child), root.data)
+
+        if data > root.data:
+            if root.r_child:
+                return "%s %s" % ( self.trace(data, root.r_child), root.data)
+
+        if data == root.data:
+            return "%s" % data
+
+        return None
+
+
+def init_tree():
+    hardcoded_tree = Tree(Node(30))
+    hardcoded_tree.insert(8)
+    hardcoded_tree.insert(52)
+    hardcoded_tree.insert(3)
+    hardcoded_tree.insert(20)
+    hardcoded_tree.insert(10)
+    hardcoded_tree.insert(29)
+
+    return hardcoded_tree
+
+def load_file(f):
+    return open(f, 'r')
+
+
+def main(argv):
+    f = load_file(argv[0])
+
+    tree = init_tree()
+
+    for row in f:
+        values = row.strip('\n').split()
+        traces = [tree.trace(int(value)) for value in values] 
+    
+        first_traces = [int(number) for number in traces[0].split()]
+        second_traces = [int(number) for number in traces[1].split()]
+
+        for n in first_traces:
+            if n in second_traces:
+                print n
+                break
+
+
+    f.close()
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))
