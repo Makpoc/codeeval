@@ -1,0 +1,106 @@
+#!/usr/bin/env python2.7
+# encoding=utf-8
+
+import sys
+
+
+def load_file(f):
+    return open(f, 'r')
+
+def is_subset(list, sublist):
+    for item in sublist:
+        if item not in list:
+            return False
+
+    return True
+
+class UserManager(object):
+    def __init__(self):
+        self.users = []
+
+    def get_user(self, name):
+        try:
+            return self.users[self.users.index(name)]
+        except ValueError:
+            user = User(name)
+            self.users.append(user)
+            return user
+
+    def get_all_registered_users(self):
+        return tuple(self.users)
+
+
+class User(object):
+    def __init__(self, name):
+        self.name = name
+        self._to = []
+        self._from = []
+
+    def add_to(self, recepient):
+        if recepient in self._to:
+            self._to[self._to.index(recepient)] = recepient
+        else:
+            self._to.append(recepient)
+
+    def get_to(self):
+        return tuple(self._to)
+
+    def add_from(self, sender):
+        if sender in self._from:
+            self._from[self._from.index(sender)] = sender
+        else:
+            self._from.append(sender)
+
+    def get_from(self):
+        return tuple(self._from)
+
+    def __eq__(self, other):
+        if hasattr(other, 'name'):
+            return self.name == other.name
+        return self.name == other
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+
+def analyze(manager):
+    all_clusters = set()
+    for user in manager.get_all_registered_users():
+#        print '%s -> %s' % (user.name, user.get_to())
+        current_cluster = [user.name]
+        for _to in user.get_to():
+            _to_user = manager.get_user(_to)
+            if user in _to_user.get_to():
+                current_cluster.append(_to_user.name)
+
+        if len(current_cluster) > 2:
+            current_cluster.sort()
+            all_clusters.add(tuple(current_cluster))
+
+    for cluster in sorted(all_clusters):
+        # TODO fix this......
+        if [ True for c2 in all_clusters if not cluster == c2 and set(cluster).issubset(c2) ]:
+            continue
+        print ", ".join(cluster)
+
+
+def main(argv):
+    f = load_file(argv[0])
+
+    manager = UserManager()
+
+    for row in f:
+        row = row.strip('\n').split('\t')
+        sender = manager.get_user(row[1])
+        sender.add_to(row[2])
+        receiver = manager.get_user(row[2])
+        receiver.add_from(row[1])
+
+    analyze(manager)
+
+    f.close()
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))
+
