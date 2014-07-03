@@ -1,0 +1,50 @@
+#!/usr/bin/env python2.7
+# encoding=utf-8
+
+import sys
+
+class Word(object):
+    def __init__(self, word):
+        self.word = self._encode_word(word)
+
+
+    def replace(self, search, replacement):
+        encoded_search = self._encode_word(search)
+
+
+        while self.word.find(encoded_search) > -1:
+            self.word = self.word.replace(encoded_search, self._encode_word(replacement).upper())
+            
+
+    def print_word(self):
+        print self._decode_word(self.word)
+
+
+    def _encode_word(self, word):
+        return word.replace("0", "a").replace("1", "b")
+
+    def _decode_word(self, word):
+        return word.lower().replace("a", "0").replace("b", "1")
+        
+
+def load_file(f):
+    return open(f, 'r')
+
+def main(argv):
+    f = load_file(argv[0])
+
+    for row in f:
+        row = row.strip('\n')
+        word = Word(row.split(";")[0])
+        replacements = row.split(";")[1].split(",")
+
+        for index in range(0, len(replacements), 2):
+            word.replace(replacements[index], replacements[index + 1])
+            
+
+        word.print_word()
+
+    f.close()
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))

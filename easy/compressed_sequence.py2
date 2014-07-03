@@ -1,0 +1,36 @@
+#!/usr/bin/env python2.7
+# encoding=utf-8
+
+import sys
+
+def load_file(f):
+    return open(f, 'r')
+
+def main(argv):
+    f = load_file(argv[0])
+
+    for row in f:
+        row = row.strip('\n')
+        sequence = row.split()
+
+        prev_element = None
+        element_count = 1
+        result = []
+        for element in sequence:
+            if element == prev_element:
+                element_count += 1
+                continue
+            if prev_element != None:
+                result.append("%d %s" % (element_count, prev_element))
+            element_count = 1
+            prev_element = element
+
+        result.append("%d %s" % (element_count, prev_element))
+
+        print " ".join(result)
+
+
+    f.close()
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))

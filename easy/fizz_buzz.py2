@@ -1,0 +1,32 @@
+#!/usr/bin/env python2.7
+# encoding=utf-8
+
+import sys
+
+def load_file(f):
+    return open(f, 'r')
+
+def main(argv):
+    f = load_file(argv[0])
+
+    for row in f:
+        row = row.strip('\n').split()
+        output = []
+        for i in range(1, int(row[2]) + 1):
+            devided_by_first = i % int(row[0]) == 0
+            devided_by_sec  = i % int(row[1]) == 0
+            if devided_by_first and devided_by_sec:
+                output.append("FB")
+            elif devided_by_first:
+                output.append("F")
+            elif devided_by_sec:
+                output.append("B")
+            else:
+                output.append(str(i))
+
+        print " ".join(output)
+
+    f.close()
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))
